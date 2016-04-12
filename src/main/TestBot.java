@@ -33,7 +33,6 @@ public class TestBot {
 
     public TestBot() {
         anacondaCounter = 0;
-        alive = true;
     }
 
     //--- Http handling
@@ -86,14 +85,14 @@ public class TestBot {
         HttpResponse<JsonNode> response;
         System.out.println("Listening.\n");
 
-        while(alive) {
+        while(true) {
             response = getUpdates(last_upd_id++);
             if (response.getStatus() == 200) {
                 JSONArray responses = response.getBody().getObject().getJSONArray("result");
                 if(responses.isNull(0)) continue;
                 else last_upd_id = responses.getJSONObject(responses.length()-1).getInt("update_id")+1;
 
-                for (int i = 0; i < responses.length() && alive; i++) {
+                for (int i = 0; i < responses.length(); i++) {
                     JSONObject message = responses.getJSONObject(i).getJSONObject("message");
 
                     processMessage(message);
@@ -259,11 +258,11 @@ public class TestBot {
             return;
         }
 
-        //DIE
-        command = "/die";
+        //BYE
+        command = "/bye";
         if (text.startsWith(command + "@") && !text.startsWith(command + "@" + USERNAME)) return;
         if (text.startsWith(command)) {
-            die(chat_id);
+            bye(chat_id);
         }
 
         /* NO FUNCIONA - No ese pueden enviar PMs directos a @username, sólo a @channel
@@ -395,7 +394,7 @@ public class TestBot {
                 (text.toLowerCase().contains("adiós")) ||
                 (text.toLowerCase().contains("adios")) ) ) {
             System.out.println("Time to say goodbye");
-            die(chat_id);
+            bye(chat_id);
             return;
         }
 
@@ -463,9 +462,8 @@ public class TestBot {
         return TOKEN;
     }
 
-    private void die(long chat_id) throws UnirestException {
+    private void bye(long chat_id) throws UnirestException {
         sendMessage(chat_id, "Smell ya later, nerds");
-        alive = false;
         return;
     }
 }
