@@ -16,6 +16,7 @@ public class TestBot {
     private static final String USERNAME = "VylionTestBot";
     private static final String BASE_URL = "https://api.telegram.org/bot" + TOKEN;
     private int anacondaCounter;
+    private boolean alive;
 
     private final String[] names = {
             USERNAME,
@@ -32,6 +33,7 @@ public class TestBot {
 
     public TestBot() {
         anacondaCounter = 0;
+        alive = true;
     }
 
     //--- Http handling
@@ -84,7 +86,7 @@ public class TestBot {
         HttpResponse<JsonNode> response;
         System.out.println("Listening.\n");
 
-        while(true) {
+        while(alive) {
             response = getUpdates(last_upd_id++);
             if (response.getStatus() == 200) {
                 JSONArray responses = response.getBody().getObject().getJSONArray("result");
@@ -101,20 +103,30 @@ public class TestBot {
     }
 
     private void processMessage(JSONObject message) throws UnirestException {
-        String chatName = message.getJSONObject("chat").getString("title");
-
-        System.out.println("Message received from " + chatName + "\n");
-        //System.out.println(message + "\n");
         String user = "blank_username";
         String name = "blank_name";
+        String chatName = "blank_chatname";
 
         long chat_id = message.getJSONObject("chat").getLong("id");
+
         int message_id = message.getInt("message_id");
+
         if (message.getJSONObject("from").has("username"))
             user = message.getJSONObject("from").getString("username");
 
+        if (message.getJSONObject("chat").has("title"))
+            chatName = message.getJSONObject("chat").getString("title");
+        else if (!name.equals("blank_name"))
+            chatName = name;
+        else if (!user.equals("blank_username"))
+            chatName = user;
+        else chatName = "chat id " + chat_id;
+
+        System.out.println("Message received from " + chatName + "\n");
+        //System.out.println(message + "\n");
+
         if (message.getJSONObject("from").has("first_name") || message.getJSONObject("from").has("last_name")) {
-            if(!message.getJSONObject("from").has("first_name"))
+            if (!message.getJSONObject("from").has("first_name"))
                 name = message.getJSONObject("from").getString("last_name");
 
             else if (!message.getJSONObject("from").has("name"))
@@ -134,14 +146,10 @@ public class TestBot {
             if (text.startsWith("/")) handleCommand(chat_id, message_id, user, name, text);
             else handleText(chat_id, message_id, user, name, text);
             return;
-        }
-
-        else if (message.has("new_chat_participant")) {
+        } else if (message.has("new_chat_participant")) {
             handleNewParticipant(chat_id, message.getJSONObject("new_chat_participant"));
             return;
-        }
-
-        else if (message.has("left_chat_participant")) {
+        } else if (message.has("left_chat_participant")) {
             handleExpulsion(chat_id, message.getJSONObject("left_chat_participant"));
             return;
         }
@@ -251,6 +259,13 @@ public class TestBot {
             return;
         }
 
+        //DIE
+        command = "/die";
+        if (text.startsWith(command + "@") && !text.startsWith(command + "@" + USERNAME)) return;
+        if (text.startsWith(command)) {
+            die(chat_id);
+        }
+
         /* NO FUNCIONA - No ese pueden enviar PMs directos a @username, sólo a @channel
         else if(text.startsWith("/send")) {
             text = text.substring("/send".length());
@@ -265,7 +280,7 @@ public class TestBot {
         */
     }
 
-    private void handleWords(long chat_id, int message_id, String text) throws UnirestException {
+    private void handleWords(long chat_id, int message_id, String text, boolean mention) throws UnirestException {
 
         //MY ANACONDA DON'T
         if(text.toLowerCase().equals("my anaconda don't")) {
@@ -339,7 +354,7 @@ public class TestBot {
             memes = true;
         }
         if(text.toLowerCase().contains("imethanbradberry")) {
-            sendMessage(chat_id, "CALM DOWN *fixes hair*");
+            replyMessage(chat_id, message_id, "CALM DOWN *fixes hair*");
             memes = true;
         } else if(text.toLowerCase().contains("bradberry")) {
             sendMessage(chat_id, "IMETHANBRADBERRY");
@@ -365,25 +380,26 @@ public class TestBot {
 
         if(memes) return;
 
-        if( (iWasMentioned(text)) ) {
+        if(mention) {
             replyMessage(chat_id, message_id, "Ese soy yo");
             return;
         }
     }
 
     private void handleText(long chat_id, int message_id, String user, String name, String text) throws UnirestException {
+        boolean mention = iWasMentioned(text);
 
-        if( (iWasMentioned(text)) && ( (text.toLowerCase().contains("say goodbye")) ||
+        if( (mention) && ( (text.toLowerCase().contains("say goodbye")) ||
                 (text.toLowerCase().contains("despídete")) ||
                 (text.toLowerCase().contains("despidete")) ||
                 (text.toLowerCase().contains("adiós")) ||
                 (text.toLowerCase().contains("adios")) ) ) {
             System.out.println("Time to say goodbye");
-            sendMessage(chat_id, "Smell ya later, nerds");
+            die(chat_id);
             return;
         }
 
-        else handleWords(chat_id, message_id, text);
+        else handleWords(chat_id, message_id, text, mention);
     }
 
     private void handleNewParticipant(long chat_id, JSONObject participant) throws UnirestException {
@@ -445,5 +461,11 @@ public class TestBot {
 
     private String myToken() {
         return TOKEN;
+    }
+
+    private void die(long chat_id) throws UnirestException {
+        sendMessage(chat_id, "Smell ya later, nerds");
+        alive = false;
+        return;
     }
 }
