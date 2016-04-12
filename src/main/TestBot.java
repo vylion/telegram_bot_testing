@@ -93,7 +93,7 @@ public class TestBot {
                 if(responses.isNull(0)) continue;
                 else last_upd_id = responses.getJSONObject(responses.length()-1).getInt("update_id")+1;
 
-                for (int i = 0; i < responses.length(); i++) {
+                for (int i = 0; i < responses.length() && alive; i++) {
                     JSONObject message = responses.getJSONObject(i).getJSONObject("message");
 
                     processMessage(message);
