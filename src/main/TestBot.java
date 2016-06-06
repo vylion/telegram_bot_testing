@@ -7,6 +7,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+
 /**
  * Created by vylion on 4/1/16.
  */
@@ -21,14 +23,11 @@ public class TestBot {
     private final String[] names = {
             USERNAME,
             myName(),
-            "Vylion's bot",
             "Vylion Testbot",
-            "Vylion Bot",
-            "VylionBot",
-            "Vyl's Bot",
-            "Vyl Bot",
-            "VylBot",
-            "Bot de Vyl"
+            "Vyl's Testbot",
+            "Vyl Testbot",
+            "VylTestbot",
+            "Testbot de Vyl"
     };
 
     public TestBot() {
@@ -93,9 +92,11 @@ public class TestBot {
                 else last_upd_id = responses.getJSONObject(responses.length()-1).getInt("update_id")+1;
 
                 for (int i = 0; i < responses.length(); i++) {
-                    JSONObject message = responses.getJSONObject(i).getJSONObject("message");
+                    if(responses.getJSONObject(i).has("message")) {
+                        JSONObject message = responses.getJSONObject(i).getJSONObject("message");
 
-                    processMessage(message);
+                        processMessage(message);
+                    }
                 }
             }
         }
@@ -121,8 +122,8 @@ public class TestBot {
             chatName = user;
         else chatName = "chat id " + chat_id;
 
-        System.out.println("Message received from " + chatName + "\n");
-        //System.out.println(message + "\n");
+        //System.out.println("Message received from " + chatName + "\n");
+        System.out.println(message + "\n");
 
         if (message.getJSONObject("from").has("first_name") || message.getJSONObject("from").has("last_name")) {
             if (!message.getJSONObject("from").has("first_name"))
@@ -142,7 +143,7 @@ public class TestBot {
             String text = message.getString("text");
             String reply = "";
 
-            if (text.startsWith("/")) handleCommand(chat_id, message_id, user, name, text);
+            if (text.startsWith("/")) handleCommand(chat_id, chatName, message_id, user, name, text);
             else handleText(chat_id, message_id, user, name, text);
             return;
         } else if (message.has("new_chat_participant")) {
@@ -156,7 +157,7 @@ public class TestBot {
 
     //--- processMessage auxiliar funcitons
 
-    private void handleCommand(long chat_id, int message_id, String user, String name, String text) throws UnirestException {
+    private void handleCommand(long chat_id, String chat_name, int message_id, String user, String name, String text) throws UnirestException {
         String command;
 
         //START COMMAND
@@ -236,6 +237,18 @@ public class TestBot {
             }
 
             sendMessage(chat_id, "\"" + quote[1].substring(1) + "\" - " + quote[0]);
+            return;
+        }
+
+        //WHOAMI COMMAND
+        command = "/whoami";
+        if (text.startsWith(command + "@") && !text.startsWith(command + "@" + USERNAME)) return;
+        if (text.startsWith(command)) {
+            String s = "Eres " + name;
+            if(user != "blank_username") s+= ", con nombre de usuario @" + user;
+            s += ", en el chat " + chat_name + " de id " + chat_id + "\n\n";
+            s += "Hoy es " + LocalDate.now() + " en el formato ISO-8601.";
+            sendMessage(chat_id, s);
             return;
         }
 
@@ -368,12 +381,6 @@ public class TestBot {
         //ME VOY DEL WHATSAPP - CIM LABS EXCLUSIVE
         if(text.toLowerCase().equals("me voy") && (Long.toString(chat_id).equals("-1001036575277"))) {
             sendMessage(chat_id, "\"Me voy del Whatsapp, adiós.\"");
-            memes = true;
-        }
-
-        //POLE - CIM LABS EXCLUSIVE
-        if(text.toLowerCase().contains("pole") && (Long.toString(chat_id).equals("-1001036575277"))) {
-            sendMessage(chat_id, "#VylBot2016 \"Make The Pole Great Again(tm)\"");
             memes = true;
         }
 
