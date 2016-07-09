@@ -240,18 +240,6 @@ public class TestBot {
             return;
         }
 
-        //WHOAMI COMMAND
-        command = "/whoami";
-        if (text.startsWith(command + "@") && !text.startsWith(command + "@" + USERNAME)) return;
-        if (text.startsWith(command)) {
-            String s = "Eres " + name;
-            if(user != "blank_username") s+= ", con nombre de usuario @" + user;
-            s += ", en el chat " + chat_name + " de id " + chat_id + "\n\n";
-            s += "Hoy es " + LocalDate.now() + " en el formato ISO-8601.";
-            sendMessage(chat_id, s);
-            return;
-        }
-
         //HELP COMMAND
         command = "/help";
         if (text.startsWith(command + "@") && !text.startsWith(command + "@" + USERNAME)) return;
