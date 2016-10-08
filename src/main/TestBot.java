@@ -13,9 +13,8 @@ import java.time.LocalDate;
  * Created by vylion on 4/1/16.
  */
 public class TestBot {
-    private static final String TOKEN = "208948965:AAH24jpwNdkXk-y2dqIMbRcAuzrfFd4RagE";
-    private static final String LOGTAG = "TESTBOT";
-    private static final String USERNAME = "VylionTestBot";
+    private static final String TOKEN = "165232232:AAGVoVm1AA_cP2RNGh3sR4nPX9hQvujr_ls";
+    private static final String USERNAME = "VylionBot";
     private static final String BASE_URL = "https://api.telegram.org/bot" + TOKEN;
     private int anacondaCounter;
     private boolean alive;
@@ -23,11 +22,12 @@ public class TestBot {
     private final String[] names = {
             USERNAME,
             myName(),
-            "Vylion Testbot",
-            "Vyl's Testbot",
-            "Vyl Testbot",
-            "VylTestbot",
-            "Testbot de Vyl"
+            "Vylion's bot",
+            "Vylion bot",
+            "Vyl's bot",
+            "Vyl bot",
+            "Vylbot",
+            "Bot de Vyl"
     };
 
     public TestBot() {
@@ -164,7 +164,7 @@ public class TestBot {
         command = "/start";
         if (text.startsWith(command + "@") && !text.startsWith(command + "@" + USERNAME)) return;
         if (text.startsWith(command)) {
-            sendMessage(chat_id, "Hola, soy el testbot de Vylion.");
+            sendMessage(chat_id, "Hola, soy el bot de pruebas de Vylion.");
 
             if((text.length() > command.length()) && (!text.startsWith(command + "@" + USERNAME))) {
                 handleText(chat_id, message_id, user, name, text);
@@ -450,7 +450,7 @@ public class TestBot {
     }
 
     private String myName() {
-        return "Vylion's Testbot";
+        return "VylionBot";
     }
 
     private String myToken() {
