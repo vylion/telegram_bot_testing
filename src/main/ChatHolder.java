@@ -55,7 +55,7 @@ public class ChatHolder {
 
         StringJoiner s = new StringJoiner("\n", "", "\n");
         for(int i = 0; i < entry.size(); ++i) s.add(entry.get(i));
-        System.out.println(s);
+        Persistence.println(s.toString());
 
         history.add(entry);
     }

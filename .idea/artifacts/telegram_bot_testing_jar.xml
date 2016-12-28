@@ -1,9 +1,10 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="telegram_bot_testing:jar">
+  <artifact type="jar" name="telegram_bot_testing:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/telegram_bot_testing_jar</output-path>
     <root id="archive" name="telegram_bot_testing.jar">
       <element id="module-output" name="telegram_bot_testing" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/libraries/unirest-java-1.4.10-SNAPSHOT-jar-with-dependencies.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libraries/telegrambots-meta-2.4.4.3-jar-with-dependencies.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libraries/telegrambots-2.4.4.3-jar-with-dependencies.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

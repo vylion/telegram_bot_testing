@@ -11,6 +11,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 public class Main {
 
     public static void main(String[] args) {
+        Persistence.println("Starting up VylionBot...");
+
         ApiContextInitializer.init();
 
         TelegramBotsApi botsApi = new TelegramBotsApi();

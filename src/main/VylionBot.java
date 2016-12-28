@@ -33,13 +33,15 @@ public class VylionBot extends TelegramLongPollingBot {
         anacondaCounter = 0;
         chats = new HashMap<Long, ChatHolder>();
         p = Persistence.getInstance();
+
+        p.println("VylionBot ready.\n");
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         if(update.hasMessage()) {
             Message m = update.getMessage();
-            System.out.println("\n---\n\n" + m + "\n");
+            p.println("\n---\n\n" + m + "\n");
             m.isUserMessage();
             m.getChat();
 
@@ -340,7 +342,7 @@ public class VylionBot extends TelegramLongPollingBot {
     private boolean iWasMentioned(String text) {
         for(int i = 0; i < names.length; i++) {
             if(text.toLowerCase().contains(names[i].toLowerCase())) {
-                System.out.println("They mentioned me");
+                p.println("They mentioned me");
                 return true;
             }
         }
